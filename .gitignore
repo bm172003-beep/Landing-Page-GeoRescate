@@ -1,0 +1,21 @@
+# Sistema
+.DS_Store
+Thumbs.db
+__MACOSX/
+
+# Editores
+.vscode/
+.idea/
+
+# Secretos / entorno (por si se agregan en el futuro)
+.env
+.env.*
+*.pem
+*.key
+.clasp.json
+.clasprc.json
+
+# Respaldos de datos (nunca subir listas de inscritos)
+*.xlsx
+*.xls
+*.csv
