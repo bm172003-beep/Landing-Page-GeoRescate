@@ -1,106 +1,142 @@
-# GeoRescate — Landing Page
+<div align="center">
 
-Landing page de **GeoRescate**, sistema que transmite el GPS exacto y la ficha médica vital de una persona a las centrales de emergencia (SAMU, Bomberos), incluso sin internet.
+# 🛰️ GeoRescate — Landing Page
 
-Desde aquí las personas pueden:
+**Landing page responsiva para un sistema de gestión de emergencias que transmite el GPS exacto y la ficha médica vital de una persona a las centrales de rescate.**
 
-- **Inscribirse en la lista de espera del Panel Web** (nombre + correo).
-- **Descargar la app móvil** (Android / iOS), que ya es pública.
-- Ver en vivo **cuántas personas** están inscritas.
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
+![Google Apps Script](https://img.shields.io/badge/Google%20Apps%20Script-4285F4?logo=google&logoColor=white)
+![Google Sheets](https://img.shields.io/badge/Google%20Sheets-34A853?logo=googlesheets&logoColor=white)
+![Responsive](https://img.shields.io/badge/Mobile%20first-Android%20%7C%20iOS%20%7C%20PC-22c55e)
 
-## Tecnologías
 
-| Parte | Qué se usa |
+</div>
+
+---
+
+## 📸 Vista previa
+
+<div align="center">
+
+**Escritorio**
+
+<img src="docs/preview-desktop.png" alt="Vista de escritorio de GeoRescate" width="780">
+
+**Celular (Android / iOS)**
+
+<img src="docs/preview-mobile.png" alt="Vista móvil" width="240">&nbsp;&nbsp;&nbsp;<img src="docs/preview-mobile-app-modal.png" alt="Modal de descarga de la app" width="240">
+
+</div>
+
+## 🎯 ¿Qué problema aborda?
+
+En una emergencia, hablar o escribir puede ser imposible. GeoRescate propone enviar de forma automática la **ubicación exacta**, la **identidad verificada** y los **datos médicos críticos** (tipo de sangre, alergias) a SAMU y Bomberos, incluso sin conexión a internet (vía SMS cifrado).
+
+Esta landing presenta el producto y cumple dos objetivos de negocio:
+
+1. **Captar usuarios** para la lista de espera del **Panel Web**.
+2. **Dirigir la descarga** de la **app móvil**, que ya es pública.
+
+## ✨ Funcionalidades
+
+- **Diseño responsivo real**: probado desde 350 px de ancho hasta pantallas de escritorio, en Android, iOS y PC.
+- **Lista de espera conectada a Google Sheets**: el formulario guarda nombre, correo y fecha en una hoja de cálculo, sin servidor propio.
+- **Contador de inscritos en vivo**: la página consulta la cantidad real de registros y la muestra, actualizándose al inscribirse alguien.
+- **Botón inteligente "Obtener app móvil"**: detecta el sistema del visitante. En iPhone abre App Store, en Android abre Google Play y en PC muestra un selector con ambas tiendas.
+- **Animaciones**: efecto de partículas en `<canvas>`, revelado de secciones al hacer scroll (`IntersectionObserver`) y scroll suave personalizado.
+- **Accesible**: etiquetas en los campos, mensajes con `aria-live`, foco visible y soporte de `prefers-reduced-motion`.
+- **SEO y redes**: metadatos Open Graph / Twitter Card, favicon SVG y `theme-color`.
+
+## 🧱 Arquitectura
+
+```mermaid
+flowchart LR
+    U[Visitante] -->|abre| W[Landing estática<br/>HTML + CSS + JS]
+    W -->|POST nombre + correo| A[Google Apps Script<br/>doPost]
+    A -->|appendRow| S[(Google Sheets)]
+    W -->|GET ?action=count| G[Apps Script<br/>doGet]
+    G -->|cuenta filas| S
+    G -->|"{ count: N }"| W
+    W -->|detecta iOS / Android / PC| T[Google Play / App Store]
+```
+
+No hay servidor ni base de datos que mantener: la página es estática y el "backend" es un Apps Script gratuito.
+
+## 🛠️ Tecnologías
+
+| Capa | Herramientas |
 |---|---|
-| Estructura | HTML5 |
-| Estilos | CSS3 puro (variables CSS, Grid, Flexbox, `clamp()`, `@media`). Sin frameworks |
-| Lógica | JavaScript vanilla (sin librerías ni dependencias, sin build) |
-| Tipografía | [Inter](https://fonts.google.com/specimen/Inter) vía Google Fonts |
-| Animaciones | CSS keyframes, `IntersectionObserver` (revelado al hacer scroll) y `<canvas>` (partículas del hero) |
-| Backend | **Google Apps Script** + **Google Sheets** (el "Excel" donde se guardan los inscritos) |
-| Seguridad | Content-Security-Policy por `<meta>`, campo trampa anti-bots (*honeypot*), validación de datos |
+| Estructura | HTML5 semántico |
+| Estilos | CSS3 puro: variables, Grid, Flexbox, `clamp()`, media queries, `env(safe-area-inset-*)` |
+| Lógica | JavaScript vanilla (ES6+, `fetch`, `async/await`, `IntersectionObserver`, Canvas API). Sin dependencias ni build |
+| Tipografía | Inter (Google Fonts) |
+| Backend | Google Apps Script |
+| Almacenamiento | Google Sheets |
+| Hosting | GitHub Pages (sitio estático) |
 
-No requiere instalar nada: es un sitio estático.
+## 🧠 Decisiones técnicas
 
-## Estructura
+- **Sin frameworks**: es una landing, así que prioricé carga rápida y cero dependencias.
+- **Mobile first en la práctica**: inputs de 16 px para evitar el zoom automático de iOS, `100svh` para la barra de direcciones móvil, zonas seguras del notch y botones táctiles de al menos 46 px de alto.
+- **Seguridad en capas** (ver sección siguiente), pensando en que el repositorio es público.
+- **Configuración centralizada**: todo lo editable (URL del backend, links de tiendas, contador de respaldo) está en un único bloque `CONFIG` de `script.js`.
+- **Degradación elegante**: si el backend no responde, el contador muestra un valor de respaldo y el formulario informa el error en lugar de fallar en silencio.
+- **Correcciones sobre el diseño original**: menú que se desbordaba en celular, control "deslizar" mal anidado dentro del botón SOS y clases de utilidad sin su framework.
+
+## 🔐 Seguridad y privacidad
+
+- Este repositorio **no contiene claves, tokens ni datos personales**.
+- La URL del Apps Script es pública por naturaleza (toda página que envía formularios la expone). Solo permite **agregar una inscripción** o **leer el total**; no da acceso a los datos guardados, que viven en una hoja privada.
+- **Content-Security-Policy** restrictiva: solo permite conexiones a `script.google.com` y fuentes de Google.
+- **Anti-bots**: campo trampa (*honeypot*).
+- **Validación doble**: en el navegador y en el servidor.
+- **Protección de la hoja**: límite de largo de campos, neutralización de inyección de fórmulas (`=`, `+`, `-`, `@`) y filtro de correos duplicados.
+- `.gitignore` bloquea `.env`, `.xlsx` y `.csv` para evitar subir listas de inscritos por accidente.
+
+## 📁 Estructura
 
 ```
 ├── index.html          # Página completa
 ├── styles.css          # Estilos y diseño responsivo
-├── script.js           # Configuración, formularios, contador, botón de la app, animaciones
+├── script.js           # Configuración, formularios, contador, botón de app, animaciones
 ├── favicon.svg
 ├── og-image.png        # Imagen al compartir en redes
+├── docs/               # Capturas usadas en este README
 └── backend/
-    └── Code.gs         # Código de Google Apps Script (se pega en Google, no se ejecuta en la web)
+    └── Code.gs         # Google Apps Script (se pega en Google, no corre en la web)
 ```
 
-## Diseño responsivo
+## 🚀 Cómo ejecutarlo
 
-Probada en celulares Android e iOS (desde 350 px de ancho), tablets y PC.
+**En local:** descarga el proyecto y abre `index.html` en el navegador. No requiere instalar nada.
 
-- En celular el menú se reduce a logo + botones **Obtener App** y **Panel Web**.
-- Campos de formulario de 16 px para evitar el zoom automático de iOS.
-- Soporte de zonas seguras (notch) y `100svh` para la barra del navegador móvil.
-- Respeta `prefers-reduced-motion` (reduce animaciones).
+**Con tu propio backend:**
 
-## Cómo funciona la lista de espera
-
-```
-Formulario  ──POST──▶  Apps Script (doPost)  ──▶  Google Sheets (Fecha | Nombre | Correo)
-Página      ◀──GET───  Apps Script (doGet)   ◀──  cuenta las filas → {"count": N}
-```
-
-1. Al enviar el formulario, se guarda una fila nueva en la hoja.
-2. Los correos repetidos no se guardan dos veces.
-3. Al cargar la página, se consulta la cantidad real de filas y se muestra en el contador.
-
-## Puesta en marcha
-
-### 1. Backend (Google Sheets + Apps Script)
-
-1. Crea una hoja de cálculo en Google Sheets. En la fila 1 escribe: `Fecha | Nombre | Correo`.
-2. Menú **Extensiones → Apps Script**, borra lo que haya y pega el contenido de [`backend/Code.gs`](backend/Code.gs).
-3. **Implementar → Nueva implementación → Aplicación web**
-   - Ejecutar como: **Yo**
-   - Quién tiene acceso: **Cualquier persona**
-4. Copia la URL que termina en `/exec`.
-
-> Para actualizar el código más adelante usa **Implementar → Administrar implementaciones → Editar → Nueva versión**. Así la URL no cambia.
-
-### 2. Configurar la página
-
-Abre `script.js` y edita el bloque `CONFIG` del inicio:
+1. Crea una hoja en Google Sheets con la fila 1: `Fecha | Nombre | Correo`.
+2. **Extensiones → Apps Script**, pega el contenido de [`backend/Code.gs`](backend/Code.gs).
+3. **Implementar → Nueva implementación → Aplicación web** (ejecutar como *Yo*, acceso *Cualquier persona*) y copia la URL `/exec`.
+4. En `script.js`, edita el bloque `CONFIG`:
 
 ```js
 const CONFIG = {
-  scriptURL: 'https://script.google.com/macros/s/XXXX/exec', // URL del paso anterior
-  appLinks: {
-    android: '', // link de Google Play
-    ios: ''      // link de App Store
-  },
-  fallbackCount: 46 // número mostrado si no se puede leer la hoja
+  scriptURL: 'https://script.google.com/macros/s/XXXX/exec',
+  appLinks: { android: '', ios: '' },   // links de Google Play y App Store
+  fallbackCount: 46
 };
 ```
 
-Mientras un link de tienda esté vacío, el botón muestra "Próximamente".
+**Publicar:** en GitHub, *Settings → Pages → Deploy from a branch → `main` / root*.
 
-### 3. Publicar
+## 🗺️ Próximas mejoras
 
-Al ser un sitio estático puedes usar **GitHub Pages** (Settings → Pages → rama `main`, carpeta `/root`), Netlify o Vercel.
+- [ ] Política de privacidad y aviso de uso de datos
+- [ ] Verificación de correo (doble opt-in)
+- [ ] Versión en inglés
+- [ ] Optimización de imágenes y métricas de rendimiento (Lighthouse)
+- [ ] Panel interno para ver estadísticas de inscripción
 
-Para probar en local basta abrir `index.html` en el navegador.
 
-## Privacidad y seguridad
 
-- **No hay claves, contraseñas ni tokens en este repositorio.**
-- La URL del Apps Script (`scriptURL`) es pública por diseño: cualquier página web que envíe formularios la expone. Con ella solo se puede **agregar una inscripción** o **leer el total de inscritos**. **No** da acceso a la hoja de cálculo ni a los nombres y correos guardados.
-- La hoja de Google Sheets **no debe compartirse públicamente**. Los datos de las personas viven solo ahí, nunca en el repositorio.
-- El archivo `.gitignore` bloquea por seguridad `.xlsx`, `.csv` y `.env` para no subir listas de inscritos por accidente.
-- Medidas contra abuso: campo trampa anti-bots, validación en el navegador y en el servidor, límite de largo de campos, bloqueo de inyección de fórmulas en Sheets, y filtro de correos duplicados.
-- Si alguien abusa del formulario, se puede generar una nueva implementación en Apps Script (nueva URL) y actualizar `scriptURL`.
-
-> Esta página recopila datos personales (nombre y correo). Se recomienda agregar una política de privacidad indicando para qué se usarán.
-
-## Licencia
-
-Define aquí la licencia del proyecto (por ejemplo MIT) o déjalo como "Todos los derechos reservados".
+<sub>Proyecto de portafolio. Todos los derechos reservados salvo que se indique otra licencia.</sub>
