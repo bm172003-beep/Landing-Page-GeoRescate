@@ -16,19 +16,6 @@
 
 ---
 
-## 📸 Vista previa
-
-<div align="center">
-
-**Escritorio**
-
-<img src="docs/preview-desktop.png" alt="Vista de escritorio de GeoRescate" width="780">
-
-**Celular (Android / iOS)**
-
-<img src="docs/preview-mobile.png" alt="Vista móvil" width="240">&nbsp;&nbsp;&nbsp;<img src="docs/preview-mobile-app-modal.png" alt="Modal de descarga de la app" width="240">
-
-</div>
 
 ## 🎯 ¿Qué problema aborda?
 
