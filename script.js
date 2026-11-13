@@ -7,7 +7,7 @@ const CONFIG = {
 
   // Enlaces de descarga de la app móvil (pega aquí los links reales)
   appLinks: {
-    android: '',  // ej: 'https://play.google.com/store/apps/details?id=cl.georescate.app'
+    android: 'https://drive.google.com/uc?export=download&id=1E_ZUmg4FzMma1N12yKeb2tn0cLzV-hwb',  // APK de prueba (descarga directa desde Drive)
     ios: ''       // ej: 'https://apps.apple.com/cl/app/georescate/id1234567890'
   },
 
@@ -184,7 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
     b.addEventListener('click', () => {
       // En el celular: va directo a la tienda que corresponde. En PC: muestra las dos opciones.
       if (isIOS && CONFIG.appLinks.ios) { window.location.href = CONFIG.appLinks.ios; return; }
-      if (isAndroid && CONFIG.appLinks.android) { window.location.href = CONFIG.appLinks.android; return; }
       openModal();
     });
   });
